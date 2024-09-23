@@ -1,9 +1,32 @@
-/*.background{
+/* body{
     background-image:url("https://wallpapers.com/images/hd/anime-all-characters-hd-4r9pb6ju4v1b0m48.jpg");
     background-position: center;
     background-size:cover;
     background-repeat: no-repeat;
     margin:290px;
-    opacity:1;/*  OPACITY DOESNT WORK*/
-} */
+    opacity:1; /*OPACITY DOESNT WORK*/
 
+
+    .link-container {
+        color: black;
+        font-size: 46;
+        width:50%;
+       /* text-decoration: none;  */
+       margin: auto; /*center white container*/
+       
+    }
+    .link-container {
+        /*color: blue;  DOESNT WORK HERE NEEDS .link-contianer a */ 
+        background-color: white;
+        margin:px;
+        padding: 30px;
+        border: px;  
+    }
+    .center-div{
+        display: flex;
+        align-items: center; /*not doing anything*/
+        justify-content: center;
+    }
+    .center-div a{
+        margin-right: 20px;
+    }
