@@ -1,0 +1,60 @@
+.table > thead > tr > th,
+.table > tbody > tr > td {
+  padding: 10px 25px;
+  line-height: 1.5;
+  /* border: none;
+  vertical-align: middle; */
+}
+
+.table thead tr th {
+  /* padding-top: 15px;
+  padding-bottom: 15px; */
+  font-size: 30px;
+  color: white;
+  text-align:center;
+}
+
+td {
+  color: white;
+  font-size: 30px;
+  text-align:center;
+  margin: auto;
+} 
+.background-image{
+    background-image: url('../images/gray.jpg');
+    height: 98vh;
+    background-size: contain; 
+    background-repeat: no-repeat; 
+    background-position: center;
+}
+.link-container {
+    background-color: rgb(24, 22, 22);
+    padding: 5px; 
+    color: black;
+    font-size: 30px;
+    width:100%;
+    margin: auto;
+    text-align: center;
+}
+.link-container a{
+    font-size: 30px;
+    padding: 2%;
+    color: blue;
+    /* text-decoration: none; */
+}
+
+.title-container{
+    background-color: rgb(24, 22, 22);
+}
+
+.table-container{
+    margin-left: 15%;
+    margin-top: 1%;
+}
+
+th{
+    background-color:brown;
+}
+.otherBImage{
+    background-color: rgb(24, 22, 22);
+}
