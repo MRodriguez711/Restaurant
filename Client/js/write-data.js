@@ -1,5 +1,38 @@
+
+    
+    
     $("#submit").click(function () {
-        alert("Submit button was pressed");
+       // alert("Submit button was pressed");
+        var restaurantName = $('#restaurantName').val();
+        var foodType = $('#foodType').val();
+        var location = $('#location').val();
+        var criticRating = $('#criticRating').val();
+        var patronRating = $('#patronRating').val();
+
+        var jsonObj= {
+            restaurantName:restaurantName, 
+            foodType:foodType, 
+            location:location,
+            criticRating:criticRating, 
+            patronRating:patronRating  }
+  
+
+    $.ajax({
+        url: restaurantURL +"/write",
+        type: "post",
+        data: jsonObj,
+        success: function(response) {
+            var data = JSON.parse(response);
+            if (data.msg == "SUCCESS") {
+                alert("Data Saved");   
+            } else {
+                console.log(data.msg);    
+            }
+        },
+        erro: function(err){
+            console.log(err);
+        }
+    });
     });
 
     $("#clear").click(function(){
