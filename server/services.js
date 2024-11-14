@@ -50,6 +50,21 @@ var services = function(app){
 
             }
     });
+    app.get("/get-records", function(req, res) {        //listener
+        if(fs.existsSync(db_file)){
+            fs.readFile(db_file, "utf-8", function(err, data) {
+                if(err) {
+                    res.send(JSON.stringify({msg: err}))
+                }else{
+                    var restaurantData = JSON.parse(data);
+                    res.send(JSON.stringify({msg: "SUCCESS", fileData: restaurantData}))
+                }
+            });
+        }else{
+            data = [];
+            res.send(JSON.stringify({msg: "SUCCESS", fileData: data}));
+        }
+    });
 };
 
 
