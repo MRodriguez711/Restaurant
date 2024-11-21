@@ -20,7 +20,7 @@
     $.ajax({
         url: restaurantURL +"/write",
         type: "post",
-        data: jsonObj,
+        data: jsonObj,  //sending
         success: function(response) {
             var data = JSON.parse(response);
             if (data.msg == "SUCCESS") {

@@ -9,7 +9,7 @@
   //  console.log(jsonObject.length);
 
     //showTable(); 
-    retrieveData()
+retrieveData()
 //}
 
 
@@ -20,7 +20,7 @@ function retrieveData(){
         success: function(response) {
             var data = JSON.parse(response);
 
-            if(data.msg = "SUCCESS"){
+            if(data.msg == "SUCCESS"){
                 showTable(data.fileData)
             }else{
                 console.log(data.msg)
@@ -54,10 +54,45 @@ function retrieveData(){
             htmlString += "<td>" + fileData[i].location + "</td>";
             htmlString += "<td>" + fileData[i].criticRating + "</td>";
             htmlString += "<td>" + fileData[i].patronRating + "</td>";
+            htmlString += "<td><button class='btnDeleteClass' data-id='"+ fileData[i].id+"' >DELETE</button></td>"
                 
             htmlString += "</tr>"
         }
     $("#tableBody").html(htmlString);  
     activateDelete();
-}
+ } 
+    
+
+    function activateDelete(){
+        $('.btnDeleteClass').click(function(){
+            var deleteId = this.getAttribute("data-id");
+
+            var jsonObj={
+                id:deleteId
+            }
+            console.log(jsonObj);
+
+            $.ajax({
+                url: restaurantURL+"/delete",//start of calling
+                type:"DELETE",
+                data:jsonObj,   //<=sending this data to server
+                //----------------------------------//
+                success: function(response) { //beginning of receiving from server
+                    var data = JSON.parse(response);
+                    if (data.msg == "SUCCESS") {
+                        retrieveData();
+                        alert("Data Deleted");   
+                    } else {
+                        console.log(data.msg);    
+                    }
+                },
+                error: function(err){
+                    console.log(err);
+                }
+            });
+        });
+    }
+   
+
 //main();
+//"data-id= '"+ libraryData[i].id"' 
