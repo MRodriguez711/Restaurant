@@ -101,7 +101,27 @@ var services = function (app) {
 
     });
 
-};
+
+    app.get("/get-data", function (req, res) {
+
+    if (fs.existsSync(db_file)) {
+        fs.readFile(db_file, "utf-8", function (err, data) {
+            if (err) {
+                res.send(JSON.stringify({ msg: err }))
+            } else {
+                var data = JSON.parse(data);
+                res.send(JSON.stringify({ msg: "SUCCESS", fileData: data }))
+            }
+        });
+    } else {
+        data = [];
+        res.send(JSON.stringify({ msg: "SUCCESS", fileData: data }));
+    }
+});
+
+
+
+}; //SERVICES
 
 
 module.exports = services;

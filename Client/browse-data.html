@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>
+            Browse Data
+        </title>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+        <link rel="stylesheet" href="/client/css/browse-data.css">
+        <script src="/client/js/config.js"></script>
+        <script src="/client/js/browse-data.js"></script>
+
+    </head>
+  
+    <body data-ng-app="browseDataApp" data-ng-controller="browseDataCtrl">
+
+        <main>
+            <section class="title-container">
+                    <div style="color:black; font-size: 80px;  text-align:center;">Browse Data</div>
+            </section>
+    
+            <section>
+                <div class="link-container">
+                    <a href="/home">Home</a>
+                    <a href="/write-data">Enter Data</a>
+                    <a href="/view-data">View Data</a>
+                    <a href="/browse-data">Browse Data</a>
+                </div>
+            </section>
+        </main>
+
+
+        <div style="font-size: 30px;">
+      
+
+            <div>
+              <label for="name">Restaurant Name:</label>
+              <label style="margin-left:30px; color:blue" id="name">{{obj.restaurantName}}</label>
+            </div>
+    
+            <div>
+              <label for="type">Food Type:</label>
+              <label style="margin-left:30px; color:blue" id="type">{{obj.foodType}}</label>
+            </div>
+    
+            <div>
+              <label for="location">Location:</label>
+              <label style="margin-left:30px; color:blue" id="location">{{obj.location}}</label>
+            </div>
+    
+            <div>
+              <label for="criticRating">Critic Rating:</label>
+              <label style="margin-left:30px; color:blue" id="criticRating">{{obj.criticRating}}</label>
+            </div>
+    
+            <div>
+                <label for="patronRating">Patron Rating:</label>
+                <label style="margin-left:30px; color:blue" id="patronRating">{{obj.patronRating}}</label>
+            </div>
+
+            <div style ="float: left; margin-top: 30px;">
+              <div style="float:left">
+                <button id="previous" data-ng-click="changeData(-1)" data-ng-hide="hidePrevious">&lt&lt&lt Previous</button>
+            </div>
+
+            <div style="float:left">
+                <button id="next" data-ng-click="changeData(1)" data-ng-hide="hideNext">Next &gt&gt&gt</button>
+            </div>
+
+
+            </div>
+        
+        </div>
+
+    </body>
+</html>

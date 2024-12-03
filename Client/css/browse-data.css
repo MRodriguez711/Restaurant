@@ -1,0 +1,20 @@
+.link-container {
+    color: black;
+    font-size: 30px;
+    width:100%;
+   /* text-decoration: none;  */
+   margin: auto; /*center white container*/
+}
+.link-container {
+    background-color: white;
+    margin:px;
+    padding: 5px; 
+    text-align: center;
+
+}
+.link-container a{
+    font-size: 30px;
+    padding: 2%;
+    color: blue;
+    /* text-decoration: none; */
+}
