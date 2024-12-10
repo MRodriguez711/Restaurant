@@ -54,7 +54,7 @@ function retrieveData(){
             htmlString += "<td>" + fileData[i].location + "</td>";
             htmlString += "<td>" + fileData[i].criticRating + "</td>";
             htmlString += "<td>" + fileData[i].patronRating + "</td>";
-            htmlString += "<td><button class='btnDeleteClass' data-id='"+ fileData[i].id+"' >DELETE</button></td>"
+            htmlString += "<td><button class='btnDeleteClass' data-id='"+ fileData[i]._id+"' >DELETE</button></td>"
                 
             htmlString += "</tr>"
         }

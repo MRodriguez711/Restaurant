@@ -1,14 +1,21 @@
-const fs = require('fs');
-const path = require('path');
+const {MongoClient, ObjectId} = require('mongodb');
 
-const db_file = path.join(__dirname + '/files/data.txt');
+//Define Database URL
+const dbURL = process.env.DB_URI || "mongodb://127.0.0.1";
+
+//Define the database server
+const dbclient = new MongoClient(dbURL);
+
+
+
+
+
+
 
 var services = function (app) {
-    app.post('/write', function (req, res) {
-        var id = "rest" + Date.now();   // a string that's being concatenated with the current timestamp
-
+    app.post('/write',async function (req, res) {
         var restData = {
-            id: id,
+            // _id: id,
             restaurantName: req.body.restaurantName,
             foodType: req.body.foodType,
             location: req.body.location,
@@ -16,55 +23,59 @@ var services = function (app) {
             patronRating: req.body.patronRating
         };
 
-        var restaurantData = [];
+        var search = {restaurantName:req.body.restaurantName};
+        //console.log('Searching for:', search);
+        try{  
+            const conn = await dbclient.connect();
+            const db = conn.db("restaurant");
+            const coll = db.collection('restaurantdata');
 
-        if (fs.existsSync(db_file)) {
-            //READ IN CURRENT DATA BASE
-            fs.readFile(db_file, "utf-8", function (err, data) {
-                if (err) {
-                    res.send(JSON.stringify({ msg: err }))
-                } else {
-                    restaurantData = JSON.parse(data)
+            const restaurant = await coll.find(search).toArray();
 
-                    restaurantData.push(restData);
+            if(restaurant.length > 0) { 
+                await conn.close();
+                //return res.send(JSON.stringify({msg:"Restaurant Already Exists" + error}));
+                return res.send(JSON.stringify({msg:"Restaurant Already Exists"}));
+            }else{
+                await coll.insertOne(restData);
+                await conn.close();
+                return res.send(JSON.stringify({msg:"SUCCESS"}));
 
-                    fs.writeFile(db_file, JSON.stringify(restaurantData), function (err) {
-                        if (err) {
-                            res.send(JSON.stringify({ msg: err }))
-                        } else {
-                            res.send(JSON.stringify({ msg: "SUCCESS" }));
-                        }
-                    });
-                }
-            });
-        } else {
-            restaurantData.push(restData);
-
-            fs.writeFile(db_file, JSON.stringify(restaurantData), function (err) {
-                if (err) {
-                    res.send(JSON.stringify({ msg: err }))
-                } else {
-                    res.send(JSON.stringify({ msg: "SUCCESS" }));
-                }
-            });
-
+            }
+        }catch(error){
+            await conn.close();
+            return res.send(JSON.stringify({msg:"ERROR" + error}));
         }
+
     });
-    app.get("/get-records", function (req, res) {        //listener
-        if (fs.existsSync(db_file)) {
-            fs.readFile(db_file, "utf-8", function (err, data) {
-                if (err) {
-                    res.send(JSON.stringify({ msg: err }))
-                } else {
-                    var restaurantData = JSON.parse(data);
-                    res.send(JSON.stringify({ msg: "SUCCESS", fileData: restaurantData }))
-                }
-            });
-        } else {
-            data = [];
-            res.send(JSON.stringify({ msg: "SUCCESS", fileData: data }));
+
+
+
+
+    app.get("/get-records",async function (req, res) {        //listener
+        try{  
+            const conn = await dbclient.connect();
+            const db = conn.db("restaurant");
+            const coll = db.collection('restaurantdata');
+
+            const restaurantsData = await coll.find().toArray();
+
+            await conn.close();
+
+            return res.send(JSON.stringify({msg:"SUCCESS", fileData:restaurantsData}))
+        }catch(error){
+            await conn.close();
+            return res.send(JSON.stringify({msg:"ERROR" + error}));
         }
+
     });
+
+
+
+/*
+
+
+
 
     app.delete("/delete", function (req, res) {
 
@@ -102,26 +113,46 @@ var services = function (app) {
     });
 
 
-    app.get("/get-data", function (req, res) {
+*/
 
-    if (fs.existsSync(db_file)) {
-        fs.readFile(db_file, "utf-8", function (err, data) {
-            if (err) {
-                res.send(JSON.stringify({ msg: err }))
-            } else {
-                var data = JSON.parse(data);
-                res.send(JSON.stringify({ msg: "SUCCESS", fileData: data }))
-            }
-        });
-    } else {
-        data = [];
-        res.send(JSON.stringify({ msg: "SUCCESS", fileData: data }));
+
+
+
+    app.get("/get-data",async function (req, res) {
+
+        try{  
+            const conn = await dbclient.connect();
+            const db = conn.db("restaurant");
+            const coll = db.collection('restaurantdata');
+
+            const restaurantsData = await coll.find().toArray();
+
+            await conn.close();
+
+            return res.send(JSON.stringify({msg:"SUCCESS", fileData:restaurantsData}))
+        }catch(error){
+            await conn.close();
+            return res.send(JSON.stringify({msg:"ERROR" + error}));
+        }
+
+    });
+
+};
+
+
+/*var initializeDatabase = async function() {
+
+    try {
+        const conn = await dbclient.connect();
+        const db = conn.db("restaurant");
+        const coll = db.collection('restaurantdata');
+
+        await conn.close();
+    } catch(err) {
+        console.log(err);
     }
-});
 
+}*/
 
-
-}; //SERVICES
-
-
-module.exports = services;
+module.exports = { services };
+//module.exports = { services, initializeDatabase };
