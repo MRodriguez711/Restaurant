@@ -121,12 +121,12 @@ function getTypes(RestTableData){
     typesArray = [{value:"", display:"ALL"}];
     for(var i = 0; i<RestTableData.length; i++){
         typeExists = typesArray.find(function (element) {
-            return element.value === RestTableData[i].type;        
+            return element.value === RestTableData[i].foodType;        
         }); if(typeExists){
             continue;
         }else{
             // typesArray.push({value: RestTableData[i].type,display:RestTableData[i].type.toUpperCase()});
-            typesArray.push({value: RestTableData[i].type,display:RestTableData[i].type});
+            typesArray.push({value: RestTableData[i].foodType,display:RestTableData[i].foodtype});
 
         }
     }

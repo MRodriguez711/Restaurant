@@ -72,7 +72,7 @@ var services = function (app) {
 
 
     app.get("/get-recordsByType", async function(req, res) {
-        var search = (req.query.type === "") ? {} : {type: req.query.type};
+        var search = (req.query.type === "") ? {} : {foodType: req.query.type};
 
         try{
         
