@@ -126,7 +126,7 @@ function getTypes(RestTableData){
             continue;
         }else{
             // typesArray.push({value: RestTableData[i].type,display:RestTableData[i].type.toUpperCase()});
-            typesArray.push({value: RestTableData[i].foodType,display:RestTableData[i].foodtype});
+            typesArray.push({value: RestTableData[i].foodType,display:RestTableData[i].foodType});
 
         }
     }
