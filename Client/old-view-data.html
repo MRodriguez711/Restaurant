@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Data</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="/client/css/view-data.css">
+     <script src="/client/js/config.js" async></script>
+    <script src="/client/js/old-view-data.js" async></script>
+   
+    
+
+</head>
+
+<body>
+    <div class="otherBImage">
+    <div class="background-image">
+    <main>
+        <section class="title-container">
+                <div style="color:white; font-size: 80px;  text-align:center;">Restaurants Database</div>
+        </section>
+
+        <section>
+            <div class="link-container">
+                <a href="/home">Home</a>
+                <a href="/write-data">Enter Data</a>
+                <a href="/view-data">View Data</a>
+                <a href="/browse-data">Browse Data</a>
+            </div>
+
+
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Restaurant Name</th>
+                            <th>Food Type</th>
+                            <th>Location</th>
+                            <th>Critic Rating</th>
+                            <th>Patron Rating</th>
+                            <th></th> <!--DELETE HEADER-->
+                        </tr>
+                    </thead>
+                    <tbody id='tableBody'></tbody>
+                </table>
+            </div>
+            
+        
+        </section>
+    </main>
+    </div>
+    </div>
+    </body>
+</body>
+
+</html>
+
+<!-- Restaurant name
+Food Type
+Location
+Critic rating: 1 to 5 stars
+Patron rating: 1 to 5 stars -->

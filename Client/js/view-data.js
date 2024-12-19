@@ -1,98 +1,134 @@
-//var data = '[{"restaurantName":"La Focaccia","foodType": "Italian","location":"Summit","criticRating":"4","patronRating":"4.5"},{"restaurantName": "The Commited Pig","foodType":"Hamburger","location":"Summit","criticRating":"4","patronRating": "4.3"},{"restaurantName":"Sea Fire Grill","foodType":"Seafood","location":"New York","criticRating": "5","patronRating":"4.6"},{"restaurantName": "McDonalds","foodType": "Fast food","location": "Newark","criticRating":"2","patronRating":"3.7"},{"restaurantName": "IHOP","foodType":"Breakfast","location":"Jersey City","criticRating": "3","patronRating": "4"}]';
+var app = angular.module('tableApp',[]);
 
-//jsonObject = JSON.parse(data);
-//retrieveData();
+app.controller('tableCtrl',function($scope,$http){
+    $scope.restArray= [];
 
-
-//function main() {
-   // console.log(jsonObject);
-  //  console.log(jsonObject.length);
-
-    //showTable(); 
-retrieveData()
-//}
-
-
-function retrieveData(){
-    $.ajax({
-        url: restaurantURL +"/get-records",
-        type: "get",
-        success: function(response) {
-            var data = JSON.parse(response);
-
-            if(data.msg == "SUCCESS"){
-                showTable(data.fileData)
+    $scope.get_records =function(){
+        $http({
+            method:'get',
+            url:restaurantURL +"/get-records"
+        }).then(function(response){
+            console.log(response.data); 
+            if(response.data.msg === "SUCCESS"){
+                $scope.restArray = response.data.rest;
+                $scope.types = getTypes(response.data.rest);
+                $scope.selectedType = $scope.types[0];
             }else{
-                console.log(data.msg)
+                console.log(response.data.msg);
             }
-        },
-        error: function(err){
-            console.log(err);
+        }),function(error){
+            console.log(error);
         }
-    });
+     };   
+     $scope.get_records();
+
+     $scope.redrawTable =function() {
+        var type = $scope.selectedType.value;
+
+        $http({
+            method:'get',
+            url:restaurantURL +"/get-recordsByType",
+            params:{type: type}
+        }).then(function(response){
+            if(response.data.msg === "SUCCESS"){
+                $scope.restArray = response.data.rest;
+            }else{
+                console.log(response.data.msg);
+            }
+        }),function(error){
+            console.log(error);
+        }
+     }; 
+
+$scope.editRest = function(restNumber){
+    $scope.name =   $scope.restArray[restNumber].name
+    $scope.type =  $scope.restArray[restNumber].type
+    $scope.location =  $scope.restArray[restNumber].location
+    $scope.criticRating = $scope.restArray[restNumber].criticRating
+    $scope.patronRating = $scope.restArray[restNumber].patronRating
+
+    $scope.restId = $scope.restArray[restNumber]['_id'];
+
+    $scope.hideTable = true;
+    $scope.hideForm = false;
 }
 
-/*function showTable(jsonObject) {
+$scope.cancelUpdate = function() {
+    $scope.hideTable = false;
+    $scope.hideForm = true;
+}
 
-    var htmlString = "";
-    for (var i = 0; i < jsonObject.length; i++) {
-        htmlString += "<tr>";
-        htmlString += "<td>" + jsonObject[i].restaurantName + "</td>";
-        htmlString += "<td>" + jsonObject[i].foodType + "</td>";    
-        htmlString += "<td>" + jsonObject[i].location + "</td>";
-        htmlString += "<td>" + jsonObject[i].criticRating + "</td>";
-        htmlString += "<td>" + jsonObject[i].patronRating + "</td>";
-        htmlString += "</tr>"
-    }*/
-    function showTable(fileData) {
-
-        var htmlString = "";
-        for (var i = 0; i < fileData.length; i++) {
-            htmlString += "<tr>";
-            htmlString += "<td>" + fileData[i].restaurantName + "</td>";
-            htmlString += "<td>" + fileData[i].foodType + "</td>";    
-            htmlString += "<td>" + fileData[i].location + "</td>";
-            htmlString += "<td>" + fileData[i].criticRating + "</td>";
-            htmlString += "<td>" + fileData[i].patronRating + "</td>";
-            htmlString += "<td><button class='btnDeleteClass' data-id='"+ fileData[i]._id+"' >DELETE</button></td>"
-                
-            htmlString += "</tr>"
-        }
-    $("#tableBody").html(htmlString);  
-    activateDelete();
- } 
-    
-
-    function activateDelete(){
-        $('.btnDeleteClass').click(function(){
-            var deleteId = this.getAttribute("data-id");
-
-            var jsonObj={
-                id:deleteId
-            }
-            console.log(jsonObj);
-
-            $.ajax({
-                url: restaurantURL+"/delete",//start of calling
-                type:"DELETE",
-                data:jsonObj,   //<=sending this data to server
-                //----------------------------------//
-                success: function(response) { //beginning of receiving from server
-                    var data = JSON.parse(response);
-                    if (data.msg == "SUCCESS") {
-                        retrieveData();
-                        alert("Data Deleted");   
-                    } else {
-                        console.log(data.msg);    
-                    }
-                },
-                error: function(err){
-                    console.log(err);
-                }
-            });
-        });
+$scope.updateRest = function(){
+    if($scope.type === "" || $scope.criticRating === "" || $scope.patronRating === ""){
+        $scope.addResults= "Type, Critic Rating, and Patron Rating are required"
+        return;
     }
-   
+    $http({
+        method:'put',
+        url:restaurantURL + "/update-rest",
+        data: {
+            ID: $scope.restId,
+            name: $scope.name,
+            type:  $scope.type,
+            criticRating: $scope.criticRating,
+            patronRating: $scope.patronRating,
+            location: $scope.location
+        }
+    }).then(function(response){
+        if(response.data.msg === "SUCCESS"){
+            $scope.cancelUpdate();
+            $scope.redrawTable();
 
-//main();
-//"data-id= '"+ libraryData[i].id"' 
+            $scope.name = "";
+            $scope.type = "";
+            $scope.location = "";
+            $scope.criticRating = "";
+            $scope.patronRating = "";
+
+
+        } else{
+            $scope.addResults = response.data.msg;
+        }
+    }),function(error){
+        console.log(error)
+    }
+
+    
+} 
+
+$scope.deleteRest = function(id) {
+    console.log(id);
+    $http({
+        method:'delete',
+        url: restaurantURL +"/delete-rest",
+        params: {restId: id}
+
+    }).then(function(response) {
+        if(response.data.msg === "SUCCESS"){
+            $scope.redrawTable();
+        }else{
+            console.log(response.data.msg);
+        }
+    }), function(error) {
+        console.log(error);
+    }
+}
+})//end of ctrl
+
+function getTypes(RestTableData){
+    var typeExists;
+
+    typesArray = [{value:"", display:"ALL"}];
+    for(var i = 0; i<RestTableData.length; i++){
+        typeExists = typesArray.find(function (element) {
+            return element.value === RestTableData[i].type;        
+        }); if(typeExists){
+            continue;
+        }else{
+            // typesArray.push({value: RestTableData[i].type,display:RestTableData[i].type.toUpperCase()});
+            typesArray.push({value: RestTableData[i].type,display:RestTableData[i].type});
+
+        }
+    }
+    return typesArray;
+}

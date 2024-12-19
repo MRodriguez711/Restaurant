@@ -9,9 +9,6 @@ const dbclient = new MongoClient(dbURL);
 
 
 
-
-
-
 var services = function (app) {
     app.post('/write',async function (req, res) {
         var restData = {
@@ -50,19 +47,20 @@ var services = function (app) {
     });
 
 
+    //---------------------------------------------------------------------------------------------------------------
 
 
-    app.get("/get-records",async function (req, res) {        //listener
-        try{  
+    app.get('/get-records', async function(req, res) {
+        try{
             const conn = await dbclient.connect();
             const db = conn.db("restaurant");
             const coll = db.collection('restaurantdata');
 
-            const restaurantsData = await coll.find().toArray();
+            const data = await coll.find().toArray();      
 
             await conn.close();
 
-            return res.send(JSON.stringify({msg:"SUCCESS", fileData:restaurantsData}))
+            return res.send(JSON.stringify({msg:"SUCCESS", rest:data}))
         }catch(error){
             //await conn.close();
             return res.send(JSON.stringify({msg:"ERROR" + error}));
@@ -73,52 +71,65 @@ var services = function (app) {
 
 
 
+    app.get("/get-recordsByType", async function(req, res) {
+        var search = (req.query.type === "") ? {} : {type: req.query.type};
 
+        try{
+        
+            const conn = await dbclient.connect();
+            const db = conn.db("restaurant");
+            const coll = db.collection('restaurantdata');
 
+            const data = await coll.find(search).toArray();       
 
+            await conn.close();
 
-    app.delete("/delete", async function (req, res) {
-
-       /* var deleteId = req.body.id;
-        console.log('Deleted ID:', deleteId);
-
-
-        if (fs.existsSync(db_file)) {
-            fs.readFile(db_file, "utf-8", function (err, data) {
-                if (err) {
-                    res.send(JSON.stringify({ msg: err }))
-                } else {
-                    var restaurantData = JSON.parse(data);  //array of json objects-name doesnt have to be restaurantData
-                    //loop through the resturant data array to find the delete id, then remove from array
-                    //once removed, stringify 
-                    for (var i = 0; i < restaurantData.length; i++) {
-                        if (restaurantData[i].id == deleteId) {
-                            restaurantData.splice(i, 1);
-                        }
-                    }
-                    fs.writeFile(db_file, JSON.stringify(restaurantData), function (err) {  //updated data back to the file
-                        if (err) {
-                            res.send(JSON.stringify({ msg: err }))
-                        } else {
-                            res.send(JSON.stringify({ msg: "SUCCESS" }));
-                        }
-                    });
-
-                }
-
-
-            });
+            return res.send(JSON.stringify({msg:"SUCCESS", rest:data}))
+        }catch(error){
+            //await conn.close();
+            return res.send(JSON.stringify({msg:"ERROR" + error}));
         }
 
-         });
-                */
+    });
+
+    app.put('/update-rest', async function(req, res) {
+        var updateData = {
+            $set: {
+                restaurantName: req.body.name,
+                foodType: req.body.type,
+                criticRating: req.body.criticRating,
+                patronRating: req.body.patronRating,
+                location: req.body.location,
+
+            }
+        }
+
         try{
-            const conn = await dbclient.connect(); //connects to db server
-            const db = conn.db("restaurant") //connected to specific db
-            const coll = db.collection("restaurantdata"); //connected to table 
+            const conn = await dbclient.connect();
+            const db = conn.db("restaurant");
+            const coll = db.collection('restaurantdata');
+
+            const search =  {_id: ObjectId.createFromHexString(req.body.ID)};
+
+            await coll.updateOne(search,updateData);
+            await conn.close();
+
+            return res.send(JSON.stringify({msg: "SUCCESS"}));
+
+        }catch(err){
+            console.log(err);
+            return res.send(JSON.stringify({msg:"ERROR" + err}));
+        }
+    });
+
+    app.delete('/delete-rest', async function(req, res) {
+        try{
+            const conn = await dbclient.connect();
+            const db = conn.db("restaurant");
+            const coll = db.collection('restaurantdata');
 
             //where
-            const search = {_id: ObjectId.createFromHexString(req.body.id)} 
+            const search = {_id: ObjectId.createFromHexString(req.query.restId)} //convert string to obj
 
             await coll.deleteOne(search);
 
@@ -129,13 +140,33 @@ var services = function (app) {
             console.log(err);
             return res.send(JSON.stringify({msg:"ERROR" + err}));
         }
+    });
+
+
+
+    app.post('/refreshRest', async function(req, res) {
+    try {
+        const conn = await dbclient.connect();
+        const db = conn.db("restaurant");
+        const coll = db.collection('restaurantdata');
+        await coll.drop();
+        console.log("Dropped database");
+        await dbclient.close();
+        initializeDatabase();
+        return res.status(200).send(JSON.stringify({msg:"SUCCESS"}));        
+    } catch(err) {
+        console.log(err);
+        return res.status(200).send(JSON.stringify({msg:"Error: " + err}));
+    }
 
     });
 
 
 
 
-    app.get("/get-data",async function (req, res) {
+    //---------------------------------------------------------------------------------------------------------------
+
+    app.get("/get-data",async function (req, res) { //for browsing
 
         try{  
             const conn = await dbclient.connect();
@@ -156,20 +187,6 @@ var services = function (app) {
 
 };
 
-
-/*var initializeDatabase = async function() {
-
-    try {
-        const conn = await dbclient.connect();
-        const db = conn.db("restaurant");
-        const coll = db.collection('restaurantdata');
-
-        await conn.close();
-    } catch(err) {
-        console.log(err);
-    }
-
-}*/
 
 module.exports = { services };
 //module.exports = { services, initializeDatabase };
