@@ -43,7 +43,7 @@ var services = function (app) {
 
             }
         }catch(error){
-            await conn.close();
+           // await conn.close();
             return res.send(JSON.stringify({msg:"ERROR" + error}));
         }
 
@@ -64,7 +64,7 @@ var services = function (app) {
 
             return res.send(JSON.stringify({msg:"SUCCESS", fileData:restaurantsData}))
         }catch(error){
-            await conn.close();
+            //await conn.close();
             return res.send(JSON.stringify({msg:"ERROR" + error}));
         }
 
@@ -72,14 +72,14 @@ var services = function (app) {
 
 
 
-/*
 
 
 
 
-    app.delete("/delete", function (req, res) {
 
-        var deleteId = req.body.id;
+    app.delete("/delete", async function (req, res) {
+
+       /* var deleteId = req.body.id;
         console.log('Deleted ID:', deleteId);
 
 
@@ -110,10 +110,27 @@ var services = function (app) {
             });
         }
 
+         });
+                */
+        try{
+            const conn = await dbclient.connect(); //connects to db server
+            const db = conn.db("restaurant") //connected to specific db
+            const coll = db.collection("restaurantdata"); //connected to table 
+
+            //where
+            const search = {_id: ObjectId.createFromHexString(req.body.id)} 
+
+            await coll.deleteOne(search);
+
+            await conn.close();
+
+            return res.send(JSON.stringify({msg: "SUCCESS"}));
+        }catch(err){
+            console.log(err);
+            return res.send(JSON.stringify({msg:"ERROR" + err}));
+        }
+
     });
-
-
-*/
 
 
 
@@ -131,7 +148,7 @@ var services = function (app) {
 
             return res.send(JSON.stringify({msg:"SUCCESS", fileData:restaurantsData}))
         }catch(error){
-            await conn.close();
+            //await conn.close();
             return res.send(JSON.stringify({msg:"ERROR" + error}));
         }
 

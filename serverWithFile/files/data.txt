@@ -1,3 +1,0 @@
-[{"id":"rest1732201899412","restaurantName":"La Focaccia","foodType":"Italian","location":"Summit","criticRating":"4","patronRating":"4.5"},
-{"id":"rest1732201931125","restaurantName":"Sea Fire Grill","foodType":"Seafood","location":"New York","criticRating":"5","patronRating":"4.6"},
-{"id":"rest1732201964768","restaurantName":"The Commited Pig","foodType":"Hamburger","location":"Summit","criticRating":"4","patronRating":"4.3"}]

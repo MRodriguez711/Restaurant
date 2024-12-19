@@ -29,7 +29,7 @@
                 console.log(data.msg);    
             }
         },
-        erro: function(err){
+        error: function(err){
             console.log(err);
         }
     });
